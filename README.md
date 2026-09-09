@@ -31,8 +31,17 @@ section of its README.
 
 ## The Cyrillic font
 
-`DepartureMonoCyrillic5pt8b.h` is **generated** — `python3 tools/make_cyrillic.py`. Do not hand-edit
-it; edit the glyph art in the generator and regenerate.
+`DepartureMonoCyrillic5pt8b.h` was **bootstrapped** by `python3 tools/make_cyrillic.py`, but the
+**`.h` is authoritative** — it is hand-corrected in the [GFX Font Customiser][cust] like the Latin
+faces, which re-emits the whole file with its own byte packing.
+
+So the generator is kept as the *design source*, not as a build step: when you correct a glyph in
+the `.h`, back-port the same change into the art in `make_cyrillic.py`, and check they still agree
+**semantically** (render each glyph from both and compare — byte-for-byte will never match, because
+the packing differs). Running the generator over your edited file would silently revert your
+corrections; it is not part of any build.
+
+[cust]: https://tchapi.github.io/Adafruit-GFX-Font-Customiser/
 
 **It is a second font, not a replacement.** The four Latin faces are finished and nothing here
 touches them. A Cyrillic run is drawn by switching font, which is why this file carries **ASCII at

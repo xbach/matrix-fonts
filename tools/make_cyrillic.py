@@ -1,6 +1,11 @@
 #!/usr/bin/env python3
 """Generate DepartureMonoCyrillic5pt8b.h from the corrected Latin 5pt font.
 
+Glyph art here is the source of truth. Bach's hand corrections to the emitted
+header (2026-09-09: narrower bowl on Ю/ю, я's leg carried to the left edge, Ґ/ґ dropped one row) are
+back-ported into the art below, so regenerating reproduces them rather than
+reverting them.
+
 Why generated and not converted from the TTF: the Departure Mono vectors do not
 rasterise cleanly at 5pt, and the Latin faces in this repo carry a lot of manual
 pixel correction. Re-converting would throw that away and reintroduce the same
@@ -253,13 +258,13 @@ NEW = {
 .###.
 """, CAP),
 "Ю": g("""
-#..##
+#..#.
 #.#.#
 #.#.#
 ###.#
 #.#.#
 #.#.#
-#..##
+#..#.
 """, CAP),
 "Я": g("""
 .####
@@ -292,9 +297,9 @@ NEW = {
 .###.
 """, CAP),
 "Ґ": g("""
+.....
 ....#
 #####
-#....
 #....
 #....
 #....
@@ -482,18 +487,18 @@ NEW = {
 .###.
 """, LOW),
 "ю": g("""
-#..##
+#..#.
 #.#.#
 ###.#
 #.#.#
-#..##
+#..#.
 """, LOW),
 "я": g("""
 .####
 #...#
 .####
-..#.#
 .#..#
+#...#
 """, LOW),
 "ё": g("""
 .#.#.
@@ -518,7 +523,7 @@ NEW = {
 #....
 #....
 #....
-""", ASC),
+""", -5),
 }
 
 # Cyrillic letters whose corrected Latin twin is reused verbatim
