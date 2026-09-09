@@ -15,6 +15,7 @@ were carrying byte-divergent copies of the same four fonts.
 | `DepartureMono5pt8b.h` | 5pt | destinations, ETAs, primary text |
 | `DepartureMonoCondensed5pt8b.h` | 5pt narrow | long destinations, secondary ETAs |
 | `DepartureWeather4pt8b.h` | 4pt | weather glyphs |
+| `DepartureMonoCyrillic5pt8b.h` | 5pt | Russian and Ukrainian — **CP1251**, not Latin 2 |
 
 ## Encoding
 
@@ -27,6 +28,44 @@ Full explanation of the scheme, the UTF-8 decoder and how to generate a new font
 **[spojboard-firmware/docs/FONTS.md](https://github.com/xbach/spojboard-firmware/blob/main/docs/FONTS.md)**
 — and the [Fonts & Character Support](https://github.com/xbach/spojboard-firmware#fonts--character-support)
 section of its README.
+
+## The Cyrillic font
+
+`DepartureMonoCyrillic5pt8b.h` is **generated** — `python3 tools/make_cyrillic.py`. Do not hand-edit
+it; edit the glyph art in the generator and regenerate.
+
+**It is a second font, not a replacement.** The four Latin faces are finished and nothing here
+touches them. A Cyrillic run is drawn by switching font, which is why this file carries **ASCII at
+its natural positions** as well: digits, spaces and punctuation then never force a switch mid-run,
+and only accented-Latin-beside-Cyrillic splits a run.
+
+**Encoding is CP1251**, deliberately. It is a standard, so the firmware's UTF-8 → byte map can be
+generated from Python's own codec instead of invented, and every letter Russian *and* Ukrainian need
+has a defined slot (Ё Ґ Є І Ї and lowercase).
+
+**Glyphs are derived from the corrected Latin faces, not re-converted from the TTF.** The Departure
+Mono vectors do not rasterise cleanly at 5pt and the Latin faces here carry a lot of manual pixel
+correction; re-converting would discard it. So the 19 Cyrillic letters that are shape-identical to a
+Latin one reuse that bitmap byte-for-byte (А=A, В=B, Е=E, К=K, М=M, Н=H, О=O, Р=P, С=C, Т=T, Х=X,
+І=I, а=a, е=e, о=o, р=p, с=c, у=y, х=x) and only the remaining ~60 are drawn.
+
+### No descenders — and for Cyrillic that is a correctness rule, not a style choice
+
+`DisplayManager::drawRow` blanks each 8px row band before drawing it, so anything below the baseline
+is erased by the row beneath. Latin `g`, `y` and `j` already render clipped on this panel.
+
+For Cyrillic that would be a legibility **bug**: the tail is the only thing distinguishing **ц from
+п** and **щ from ш**. So those tails sit ON the baseline row, and Д's legs likewise. The generator
+asserts this — no hand-drawn glyph may have `yOff + height > 1`.
+
+The one exception is `у`, which reuses Latin `y` and inherits its clipped descender. That is safe:
+`у` without its tail still reads as `у`, where `ц` without its tail is a different letter.
+
+### Previews
+
+`preview-cyrillic-5pt.png` is a zoomed proof sheet; `preview-cyrillic-panel.png` renders real
+128x32 frames at the panel's own 8px row pitch, which is the only view that answers whether a glyph
+is legible at size. Regenerate both with `python3 tools/preview_png.py`.
 
 ## How projects consume this
 
