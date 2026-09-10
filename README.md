@@ -139,9 +139,24 @@ DepartureMono glyph metrics", 2026-06-24), which had shipped in OTA releases r8,
 r9 and r10.
 
 beerboard and noticeboard previously carried a variant differing in **two drawn
-glyphs** — slots `0xB9` (š) and `0xBA` (ş) in the 5pt regular font — plus the
-never-emitted slot `0x90`. spojboard's drawing was adopted: it is the only one
-with field exposure, and neither other project has ever cut a release.
+glyphs** — slots `0xB9` (š) and `0xBA` (ş) in the 5pt regular font — plus slot
+`0x90`. spojboard's drawing was adopted: it is the only one with field exposure,
+and neither other project has ever cut a release.
+
+**That was right for `0xB9`/`0xBA` and wrong for `0x90`, which was reverted on
+2026-09-10.** `0x90` is the **degree sign** (ISO-8859-2 `0xB0`, less the 0x20
+shift — see *Encoding* above), and it was described here as "never-emitted" on
+the strength of spojboard, which reaches its degree a different way: it
+`snprintf`s a raw `\xB0` byte and so draws slot `0xB0`, bypassing `utf8tocp()`
+entirely. beerboard does not. A `°` typed into its web UI — whose own
+placeholder reads `e.g. 12°` — goes through `utf8tocp()` and lands on `0x90`.
+So beerboard and noticeboard had both **drawn** that glyph, and spojboard had
+never needed it; adopting spojboard's undrawn stub discarded the only real
+version. The field-exposure rule held in general and inverted for this one slot.
+
+`0x90` now carries the recovered beerboard drawing in all four Latin faces, and
+the Cyrillic face carries the same mark at its own CP1251 degree slot, `0xB0`.
+Full analysis: Asgard `RE-0061`.
 
 ## License
 
