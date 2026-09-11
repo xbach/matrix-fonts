@@ -316,6 +316,6 @@ const GFXglyph DepartureMono_Regular5pt8bGlyphs[] PROGMEM = {
 };
 
 const GFXfont DepartureMono_Regular5pt8b PROGMEM = {
-    (uint8_t*)DepartureMono_Regular5pt8bBitmaps,       (GFXglyph*)DepartureMono_Regular5pt8bGlyphs, 0x20, 0xDF,       12};
+    (uint8_t*)DepartureMono_Regular5pt8bBitmaps,        (GFXglyph*)DepartureMono_Regular5pt8bGlyphs, 0x20, 0xDF,        12};
 
 // Approx. 2277 bytes

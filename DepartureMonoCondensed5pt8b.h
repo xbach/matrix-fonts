@@ -165,7 +165,7 @@ const GFXglyph DepartureMono_Condensed5pt8bGlyphs[] PROGMEM = {
   {   245,   3,   7,   4,    1,   -4 },   // 0x67 'g'
   {   249,   3,   7,   4,    1,   -6 },   // 0x68 'h'
   {   253,   3,   7,   3,    1,   -6 },   // 0x69 'i'
-  {   257,   3,   9,   3,    0,   -6 },   // 0x6A 'j'
+  {   257,   3,   9,   4,    1,   -6 },   // 0x6A 'j'
   {   261,   3,   7,   4,    1,   -6 },   // 0x6B 'k'
   {   265,   3,   7,   3,    0,   -6 },   // 0x6C 'l'
   {   269,   5,   5,   6,    1,   -4 },   // 0x6D 'm'
@@ -206,7 +206,7 @@ const GFXglyph DepartureMono_Condensed5pt8bGlyphs[] PROGMEM = {
   {   730,   3,   3,   4,    1,   -6 },   // 0x90 'non-printable'
   {   730,   3,   8,   4,    1,   -4 },   // 0x91 'non-printable'
   {   733,   2,   3,   3,    1,    1 },   // 0x92 'non-printable'
-  {   734,   3,   7,   3,    0,   -6 },   // 0x93 'non-printable'
+  {   734,   3,   7,   4,    1,   -6 },   // 0x93 'non-printable'
   {   738,   1,   2,   3,    1,   -7 },   // 0x94 'non-printable'
   {   739,   6,   7,   4,   -1,   -6 },   // 0x95 'non-printable'
   {   745,   3,   9,   4,    1,   -8 },   // 0x96 'non-printable'
@@ -286,6 +286,6 @@ const GFXglyph DepartureMono_Condensed5pt8bGlyphs[] PROGMEM = {
 };
 
 const GFXfont DepartureMono_Condensed5pt8b PROGMEM = {
-    (uint8_t*)DepartureMono_Condensed5pt8bBitmaps,     (GFXglyph*)DepartureMono_Condensed5pt8bGlyphs, 0x20, 0xDF,     12};
+    (uint8_t*)DepartureMono_Condensed5pt8bBitmaps,      (GFXglyph*)DepartureMono_Condensed5pt8bGlyphs, 0x20, 0xDF,      12};
 
 // Approx. 2277 bytes
