@@ -128,6 +128,13 @@ Regenerating from the typeface needs
 (see FONTS.md above); individual glyphs are then tuned with the
 [Adafruit GFX Font Customiser](https://tchapi.github.io/Adafruit-GFX-Font-Customiser/).
 
+To check an accented glyph against its base letter, before or after tuning it,
+run `python3 tools/compare_glyphs.py --pair l ľ`. It decodes the headers the
+firmware compiles and reports ink that differs, ink outside the advance cell, and
+every neighbouring glyph the accent touches that the base letter does not.
+`--words` renders sample text and `--png <path>` writes a zoomed proof sheet.
+With no `--pair` it checks `l`/`ľ` and `L`/`Ľ` in the three Latin text faces.
+
 ## Provenance
 
 Glyphs are rasterised from **[Departure Mono](https://departuremono.com)** by
