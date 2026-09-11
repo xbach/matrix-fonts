@@ -203,7 +203,7 @@ const GFXglyph DepartureMono_Condensed5pt8bGlyphs[] PROGMEM = {
   {   391,   2,   1,   6,    2,   -2 },   // 0x8D 'non-printable'
   {   392,   3,  10,   4,    1,   -9 },   // 0x8E 'non-printable'
   {   397,   3,  10,   4,    1,   -9 },   // 0x8F 'non-printable'
-  {   730,   3,   3,   4,    1,   -6 },   // 0x90 'non-printable'
+  {  1057,   3,   3,   4,    1,   -6 },   // 0x90 '°'
   {   730,   3,   8,   4,    1,   -4 },   // 0x91 'non-printable'
   {   733,   2,   3,   3,    1,    1 },   // 0x92 'non-printable'
   {   734,   3,   7,   4,    1,   -6 },   // 0x93 'non-printable'

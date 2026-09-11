@@ -233,7 +233,7 @@ const GFXglyph DepartureMono_Regular5pt8bGlyphs[] PROGMEM = {
   {   465,   2,   1,   6,    2,   -2 },   // 0x8D 'non-printable'
   {   466,   5,  10,   6,    1,   -9 },   // 0x8E 'non-printable'
   {   473,   5,  10,   6,    1,   -9 },   // 0x8F 'non-printable'
-  {   951,   3,   3,   6,    2,   -6 },   // 0x90 'non-printable'
+  {  1421,   3,   3,   6,    2,   -6 },   // 0x90 '°'
   {   951,   5,   8,   6,    1,   -4 },   // 0x91 'non-printable'
   {   956,   2,   3,   6,    2,    1 },   // 0x92 'non-printable'
   {   957,   5,   7,   5,    0,   -6 },   // 0x93 'non-printable'
