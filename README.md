@@ -135,6 +135,20 @@ every neighbouring glyph the accent touches that the base letter does not.
 `--words` renders sample text and `--png <path>` writes a zoomed proof sheet.
 With no `--pair` it checks `l`/`ľ` and `L`/`Ľ` in the three Latin text faces.
 
+To review a whole face, run `python3 tools/font_map.py`. It writes
+`font-maps/<font>.png`: every slot in a 16-column grid, labelled with the
+character the firmware actually sends there, plus sample text at panel scale
+(legend in the script's docstring). The review those sheets fed is Asgard
+`RE-0069` (2026-09-11).
+
+**Keep every glyph's bitmap stored in slot order.** The re-export behind
+`f73c1b9` (the GFX Font Customiser, by every sign) sized each glyph as "from its
+offset to the next slot's offset". A glyph whose bytes had been appended at the
+end of the array therefore came back empty and drew the next glyph's pixels:
+that is how the degree sign `d810416` appended was lost. `6c5dcea` re-packed all
+five faces in slot order. A byte edit that changes a glyph's size must insert
+the bytes in place and shift every later offset, never append.
+
 ## Provenance
 
 Glyphs are rasterised from **[Departure Mono](https://departuremono.com)** by
