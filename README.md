@@ -60,8 +60,15 @@ Latin one reuse that bitmap byte-for-byte (А=A, В=B, Е=E, К=K, М=M, Н=H, �
 
 ### No descenders — and for Cyrillic that is a correctness rule, not a style choice
 
-`DisplayManager::drawRow` blanks each 8px row band before drawing it, so anything below the baseline
-is erased by the row beneath. Latin `g`, `y` and `j` already render clipped on this panel.
+noticeboard's `DisplayManager::drawRow` blanks each 8px row band before drawing it, so there anything
+below the baseline is erased by the row beneath. The other two firmwares differ: spojboard blanks
+only behind scrolling text and the line-number box, and beerboard's band keeps one row below the
+baseline. So whether ink below the baseline survives is a per-firmware answer, and the safe
+assumption is that it does not.
+
+The Latin `g`, `y` and `j` are not an example of it: in all three text faces their ink ends on the
+baseline row, so nothing is clipped (measured 2026-09-11, Asgard `RE-0069`). Only the weather face's
+`j p q y` reach below it.
 
 For Cyrillic that would be a legibility **bug**: the tail is the only thing distinguishing **ц from
 п** and **щ from ш**. So those tails sit ON the baseline row, and Д's legs likewise. The generator
@@ -135,6 +142,13 @@ every neighbouring glyph the accent touches that the base letter does not.
 `--words` renders sample text and `--png <path>` writes a zoomed proof sheet.
 With no `--pair` it checks `l`/`ľ` and `L`/`Ľ` in the three Latin text faces.
 
+**Run `python3 tools/check_fonts.py` before committing any font edit.** It fails if a face is no
+longer packed in slot order (see below), if bytes are dead or shared, if a re-export would not
+reproduce the file, or if two glyphs that are not in `tools/duplicate-glyphs.baseline` draw exactly
+the same pixels. That last one catches a defect no base-vs-accent check can see: a glyph identical
+to a *different* letter, which is how `S` = `Ś` and `Ź` = `Ż` survived. Re-record the baseline with
+`--write-baseline` only after checking the slots really are the same letter.
+
 To review a whole face, run `python3 tools/font_map.py`. It writes
 `font-maps/<font>.png`: every slot in a 16-column grid, labelled with the
 character the firmware actually sends there, plus sample text at panel scale
@@ -160,7 +174,7 @@ DepartureMono glyph metrics", 2026-06-24), which had shipped in OTA releases r8,
 r9 and r10.
 
 beerboard and noticeboard previously carried a variant differing in **two drawn
-glyphs** — slots `0xB9` (š) and `0xBA` (ş) in the 5pt regular font — plus slot
+glyphs** — slots `0xB9` (Ů) and `0xBA` (Ú) in the 5pt regular font — plus slot
 `0x90`. spojboard's drawing was adopted: it is the only one with field exposure,
 and neither other project has ever cut a release.
 

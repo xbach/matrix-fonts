@@ -1,0 +1,68 @@
+# Glyph groups that are deliberately pixel-identical, per face.
+# Regenerate with: python3 tools/check_fonts.py --write-baseline
+# Before adding a line by hand, check the slots are the same letter - a group of two
+# DIFFERENT letters is the bug this check exists to catch.
+
+# DepartureMono4pt8b.h
+DepartureMono4pt8b.h 30 4F   # 0 O
+DepartureMono4pt8b.h 90 B0   # ° Đ
+DepartureMono4pt8b.h A3 A4   # Ă Ä
+DepartureMono4pt8b.h BB BC   # Ű Ü
+DepartureMono4pt8b.h DB DC   # ű ü
+
+# DepartureMono5pt8b.h
+DepartureMono5pt8b.h A6 C6   # Ć ć
+DepartureMono5pt8b.h B3 D3   # Ó ó
+DepartureMono5pt8b.h B4 D4   # Ô ô
+DepartureMono5pt8b.h B5 D5   # Ő ő
+DepartureMono5pt8b.h B6 D6   # Ö ö
+DepartureMono5pt8b.h BB BC   # Ű Ü
+DepartureMono5pt8b.h DB DC   # ű ü
+
+# DepartureMonoCondensed5pt8b.h
+DepartureMonoCondensed5pt8b.h 30 4F   # 0 O
+DepartureMonoCondensed5pt8b.h 8C 8F   # Ź Ż
+DepartureMonoCondensed5pt8b.h B3 D3   # Ó ó
+DepartureMonoCondensed5pt8b.h B4 D4   # Ô ô
+DepartureMonoCondensed5pt8b.h B5 D5   # Ő ő
+DepartureMonoCondensed5pt8b.h B6 D6   # Ö ö
+DepartureMonoCondensed5pt8b.h B9 D9   # Ů ů
+DepartureMonoCondensed5pt8b.h BA DA   # Ú ú
+DepartureMonoCondensed5pt8b.h BB DB   # Ű ű
+DepartureMonoCondensed5pt8b.h BC DC   # Ü ü
+
+# DepartureWeather4pt8b.h
+DepartureWeather4pt8b.h 30 4F   # 0 O
+DepartureWeather4pt8b.h 82 97   # ˘ ˇ
+DepartureWeather4pt8b.h 86 96   # Ś ś
+DepartureWeather4pt8b.h 88 9D   # ¨ ˝
+DepartureWeather4pt8b.h 90 B0   # ° Đ
+DepartureWeather4pt8b.h B5 B6   # Ő Ö
+DepartureWeather4pt8b.h BB BC   # Ű Ü
+DepartureWeather4pt8b.h DB DC   # ű ü
+
+# DepartureMonoCyrillic5pt8b.h
+DepartureMonoCyrillic5pt8b.h 33 C7   # 3 З
+DepartureMonoCyrillic5pt8b.h 41 C0   # A А
+DepartureMonoCyrillic5pt8b.h 42 C2   # B В
+DepartureMonoCyrillic5pt8b.h 43 D1   # C С
+DepartureMonoCyrillic5pt8b.h 45 C5   # E Е
+DepartureMonoCyrillic5pt8b.h 48 CD   # H Н
+DepartureMonoCyrillic5pt8b.h 49 B2   # I І
+DepartureMonoCyrillic5pt8b.h 4B CA   # K К
+DepartureMonoCyrillic5pt8b.h 4D CC   # M М
+DepartureMonoCyrillic5pt8b.h 4F CE   # O О
+DepartureMonoCyrillic5pt8b.h 50 D0   # P Р
+DepartureMonoCyrillic5pt8b.h 54 D2   # T Т
+DepartureMonoCyrillic5pt8b.h 58 D5   # X Х
+DepartureMonoCyrillic5pt8b.h 59 D3   # Y У
+DepartureMonoCyrillic5pt8b.h 61 E0   # a а
+DepartureMonoCyrillic5pt8b.h 63 F1   # c с
+DepartureMonoCyrillic5pt8b.h 65 E5   # e е
+DepartureMonoCyrillic5pt8b.h 69 B3   # i і
+DepartureMonoCyrillic5pt8b.h 6F EE   # o о
+DepartureMonoCyrillic5pt8b.h 70 F0   # p р
+DepartureMonoCyrillic5pt8b.h 78 F5   # x х
+DepartureMonoCyrillic5pt8b.h 79 F3   # y у
+DepartureMonoCyrillic5pt8b.h C9 E9   # Й й
+DepartureMonoCyrillic5pt8b.h D4 F4   # Ф ф
