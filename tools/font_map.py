@@ -23,19 +23,17 @@ the Latin-1 codepoints it passes through. If that source is not found next to th
 repo, the plain ISO-8859-2 codec is used and the sheet says so. The Cyrillic face is
 CP1251 at its own code.
 """
-import argparse, os, re, sys
+import argparse, os, sys
 
 from PIL import Image, ImageDraw, ImageFont
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(HERE)
 sys.path.insert(0, HERE)
-from compare_glyphs import parse, pixels  # noqa: E402
+from compare_glyphs import GFXLATIN2, latin_maps, parse, pixels, recode_table  # noqa: E402
 
 FONTS = ["DepartureMono4pt8b.h", "DepartureMono5pt8b.h", "DepartureMonoCondensed5pt8b.h",
          "DepartureWeather4pt8b.h", "DepartureMonoCyrillic5pt8b.h"]
-GFXLATIN2 = os.path.join(ROOT, "..", "spojboard-firmware", "src", "utils", "gfxlatin2.cpp")
-
 # Rows a text row keeps, relative to the baseline, inclusive. spojboard and noticeboard
 # draw 8px rows with the baseline on the last one (-7..0); beerboard's band is -6..+1.
 ROW_BAND = (-7, 0)
@@ -68,63 +66,6 @@ def load_font(size):
         except OSError:
             pass
     return ImageFont.load_default()
-
-
-def recode_table(path):
-    """Unicode codepoint -> ISO code, read from recode()'s switch.
-
-    Every `return` closes the pending run of `case` labels, whatever it returns: the
-    disabled INVALIDATE_OVERWRITTEN_LATIN_1_CHARS block ends in a non-literal return,
-    and carrying its labels forward would attach eight Latin-1 codepoints to Ą.
-    """
-    try:
-        src = open(path, encoding="utf-8", errors="replace").read()
-    except OSError:
-        return None
-    table, pending = {}, []
-    for m in re.finditer(r"case\s+(0x[0-9A-Fa-f]+)\s*:|return\b([^;]*);", src):
-        if m.group(1):
-            pending.append(int(m.group(1), 16))
-            continue
-        value = m.group(2).strip()
-        if re.fullmatch(r"0x[0-9A-Fa-f]+", value):
-            for cp in pending:
-                table[cp] = int(value, 16)
-        pending = []
-    return table or None
-
-
-def iso_char(slot):
-    return chr(slot) if slot < 0x80 else bytes([slot + 0x20]).decode("iso-8859-2")
-
-
-def latin_maps(table):
-    """(slot -> label chars, char -> slot, unreachable slots) for the Latin faces."""
-    to_slot = {chr(cp): cp for cp in range(0x20, 0x80)}
-    if table:
-        for cp, code in table.items():
-            if 0xA0 <= code <= 0xFF:
-                to_slot[chr(cp)] = code - 0x20
-        for cp in range(0xA0, 0x100):          # Latin-1 codepoints recode() passes through
-            if cp not in table:
-                to_slot.setdefault(chr(cp), cp - 0x20)
-    else:
-        for code in range(0xA0, 0x100):
-            to_slot[bytes([code]).decode("iso-8859-2")] = code - 0x20
-    by_slot = {}
-    for ch, slot in to_slot.items():
-        by_slot.setdefault(slot, []).append(ch)
-    labels, unreachable = {}, set()
-    for slot in range(0x20, 0xE0):
-        chars = by_slot.get(slot, [])
-        if not chars:
-            labels[slot], _ = [iso_char(slot)], unreachable.add(slot)
-            continue
-        iso = iso_char(slot)
-        # the ISO-8859-2 letter first, then letters recode() maps explicitly, then passthrough
-        chars.sort(key=lambda ch: (ch != iso, not (table and ord(ch) in table), ord(ch)))
-        labels[slot] = chars[:2]
-    return labels, to_slot, unreachable
 
 
 def cyrillic_maps():

@@ -6,9 +6,13 @@ the firmware draws, not what a generator intended. For each pair it prints both
 glyphs on a shared frame, the ink that differs, ink outside the advance cell, and
 every neighbouring glyph the accented letter touches that the base letter does not.
 
-Slots follow gfxlatin2.cpp utf8tocp(): ASCII at its own code, ISO-8859-2 0xA0-0xFF
-at code - 0x20. The Cyrillic face is CP1251 and the weather face replaces letters
-with icons, so neither is in the default font list.
+Slots follow gfxlatin2.cpp: ASCII at its own code, and recode()'s ISO-8859-2 value
+less 0x20 above that. recode() is read from the firmware source, so its deliberate
+swaps are honoured - `ß`/`ẞ` live at 0xAF and `Ď` at 0xDF, where the plain codec
+would put them the other way round. Without that source the codec is used and the
+two swapped slots are labelled wrongly; the tool says so. The Cyrillic face is
+CP1251 and the weather face replaces letters with icons, so neither is in the
+default font list.
 
   python3 tools/compare_glyphs.py                              # l/ľ and L/Ľ
   python3 tools/compare_glyphs.py --pair s š --pair S Š --words šťastie
@@ -17,6 +21,7 @@ with icons, so neither is in the default font list.
 import argparse, os, re
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+GFXLATIN2 = os.path.join(ROOT, "..", "spojboard-firmware", "src", "utils", "gfxlatin2.cpp")
 DEFAULT_FONTS = ["DepartureMono4pt8b.h", "DepartureMono5pt8b.h", "DepartureMonoCondensed5pt8b.h"]
 DEFAULT_PAIRS = [("l", "ľ"), ("L", "Ľ")]
 DEFAULT_WORDS = ["lľl", "veľký", "koľko", "maľba", "ľudia", "Ľubica", "ĽUBICA"]
@@ -37,17 +42,76 @@ def parse(path):
             "bitmap": [int(h, 16) for h in re.findall(r"0x[0-9A-Fa-f]{2}", bm)]}
 
 
+def recode_table(path=GFXLATIN2):
+    """Unicode codepoint -> ISO code, read from recode()'s switch in the firmware.
+
+    Every `return` closes the pending run of `case` labels, whatever it returns: the
+    disabled INVALIDATE_OVERWRITTEN_LATIN_1_CHARS block ends in a non-literal return,
+    and carrying its labels forward would attach eight Latin-1 codepoints to Ą.
+    """
+    try:
+        src = open(path, encoding="utf-8", errors="replace").read()
+    except OSError:
+        return None
+    table, pending = {}, []
+    for m in re.finditer(r"case\s+(0x[0-9A-Fa-f]+)\s*:|return\b([^;]*);", src):
+        if m.group(1):
+            pending.append(int(m.group(1), 16))
+            continue
+        value = m.group(2).strip()
+        if re.fullmatch(r"0x[0-9A-Fa-f]+", value):
+            for cp in pending:
+                table[cp] = int(value, 16)
+        pending = []
+    return table or None
+
+
+def iso_char(code):
+    return chr(code) if code < 0x80 else bytes([code + 0x20]).decode("iso-8859-2")
+
+
+def latin_maps(table=None):
+    """(slot -> label chars, char -> slot, unreachable slots) for the Latin faces."""
+    table = recode_table() if table is None else table
+    to_slot = {chr(cp): cp for cp in range(0x20, 0x80)}
+    if table:
+        for cp, code in table.items():
+            if 0xA0 <= code <= 0xFF:
+                to_slot[chr(cp)] = code - 0x20
+        for cp in range(0xA0, 0x100):          # Latin-1 codepoints recode() passes through
+            if cp not in table:
+                to_slot.setdefault(chr(cp), cp - 0x20)
+    else:
+        for code in range(0xA0, 0x100):
+            to_slot[bytes([code]).decode("iso-8859-2")] = code - 0x20
+    by_slot = {}
+    for ch, s in to_slot.items():
+        by_slot.setdefault(s, []).append(ch)
+    labels, unreachable = {}, set()
+    for s in range(0x20, 0xE0):
+        chars = by_slot.get(s, [])
+        if not chars:
+            labels[s], _ = [iso_char(s)], unreachable.add(s)
+            continue
+        iso = iso_char(s)
+        # the ISO-8859-2 letter first, then letters recode() maps explicitly, then passthrough
+        chars.sort(key=lambda c: (c != iso, not (table and ord(c) in table), ord(c)))
+        labels[s] = chars[:2]
+    return labels, to_slot, unreachable
+
+
+_LABELS, _TO_SLOT, _ = latin_maps()
+
+
 def slot(ch):
-    b = ch.encode("iso-8859-2")[0]
-    if 0x20 <= b <= 0x7F:
-        return b
-    if b >= 0xA0:
-        return b - 0x20
-    raise ValueError(f"{ch!r} has no GFX Latin 2 slot")
+    try:
+        return _TO_SLOT[ch]
+    except KeyError:
+        raise ValueError(f"{ch!r} has no GFX Latin 2 slot") from None
 
 
 def label(code):
-    ch = chr(code) if code < 0x80 else bytes([code + 0x20]).decode("iso-8859-2")
+    ch = (_LABELS.get(code) or [None])[0] or iso_char(code)
     return ch if ch.isprintable() and not ch.isspace() else f"<{code:#04x}>"
 
 
